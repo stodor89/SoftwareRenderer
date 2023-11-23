@@ -1,12 +1,9 @@
-﻿// SoftwareRenderer.cpp : Defines the entry point for the application.
-//
+﻿#include <stdio.h>
 
-#include "SoftwareRenderer.h"
-
-using namespace std;
+#include <SDL3/SDL.h>
 
 int main()
 {
-	cout << "Hello CMake." << endl;
+	printf("Hello, World!\n");
 	return 0;
 }
