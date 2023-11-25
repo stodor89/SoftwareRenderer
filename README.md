@@ -9,7 +9,9 @@ This is a renderer I'm making as a part of Pikuma's "3D Graphics Programming for
 5. Profit!
 
 ### TODO
+- Finish the renderer, duh
 - Testing
 - Platforms other than Windoze/VS
 - Organize static stuff inside Main.cpp
 - Build/Install procedure improvements
+- OOP where it makes sense
