@@ -8,14 +8,14 @@ endif()
 
 project ("SoftwareRenderer")
 
-add_executable (SoftwareRenderer "src/Main.cpp"  "src/Macros.h" "src/Main.h" )
+add_executable (SoftwareRenderer "src/Main.cpp"  "src/Utils.h" "src/Common.h" )
 
 set_property(TARGET SoftwareRenderer PROPERTY CXX_STANDARD 23)
 
 if (MSVC)
-    target_compile_options(SoftwareRenderer PRIVATE /W4)
+    target_compile_options(SoftwareRenderer PRIVATE /W3)
 else()
-    target_compile_options(SoftwareRenderer PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(SoftwareRenderer PRIVATE -Wall)
 endif()
 
 add_subdirectory("SDL")

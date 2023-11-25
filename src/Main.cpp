@@ -2,8 +2,8 @@
 
 #include <SDL3/SDL.h>
 
-#include "Main.h"
-#include "Macros.h"
+#include "Common.h"
+#include "Utils.h"
 
 // TODO: Organize these when they become stable!
 
@@ -12,31 +12,41 @@ const char* title = "SoftwareRenderer";
 enum class Color : uint32_t
 {
 	black = 0xFF000000,
-	white = 0xFFFFFFFF
+	white = 0xFFFFFFFF,
+	red = 0xFFFF0000
 };
 
 constexpr int pixelFormatSize = 4; // bytes
 
-static SDL_Window* window;
-static SDL_Renderer* renderer;
+static SDL_Window* window = nullptr;
+static SDL_Renderer* renderer = nullptr;
 
 static Color* colorBuffer = nullptr;
-static SDL_Texture* background = nullptr;
+static SDL_Texture* colorBufferTexture = nullptr;
 
-static Color* gridBuffer = nullptr;
-static SDL_Texture* grid = nullptr;
+static int screenWidth = 0;
+static int screenHeight = 0;
+static int screenPixelsCount = 0;
+static int screenWidthBytes = 0;
+static int screenHeightBytes = 0;
 
-int screenWidth = 0;
-int screenHeight = 0;
-int screenPixelsCount = 0;
-int screenWidthBytes = 0;
-int screenHeightBytes = 0;
+static bool quit = false;
+
+static inline bool ShouldQuit()
+{
+	return quit;
+}
+
+static inline void Quit()
+{
+	quit = true;
+}
 
 // Not calling this function upon exit may leave the system in invalid state!
 static void Deinit(void)
 {
-	SDL_DestroyTexture(grid);
-	SDL_DestroyTexture(background);
+	FREE(colorBuffer);
+	SDL_DestroyTexture(colorBufferTexture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
@@ -57,10 +67,10 @@ static void Init(void)
 	CHECK_SDL_PTR(renderer = SDL_CreateRenderer(window, nullptr, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 }
 
-//static void ClearColorBuffer(Color* buffer, size_t size, Color color)
-//{
-//	CHECK_SDL_PTR(SDL_memset4(buffer, (uint32_t)color, size));
-//}
+static void ClearColorBuffer(Color* buffer, size_t size, Color color)
+{
+	CHECK_SDL_PTR(SDL_memset4(buffer, (uint32_t)color, size));
+}
 
 static void PaintColorBufferPixelByPixel(Color* buffer, int w, int h, auto paintFunc)
 {
@@ -76,30 +86,16 @@ static void PaintColorBufferPixelByPixel(Color* buffer, int w, int h, auto paint
 
 // TODO: Tests for "custom" stuff!
 
-// Don't call this at runtime! Gotta figure out something faster :)
-static SDL_Texture* SetupColoredTexture(int width, int height, auto paintFunc)
+static void Setup(void)
 {
-	Color* buffer = ALLOC<Color>(width * height);
-	PaintColorBufferPixelByPixel(buffer, width, height, paintFunc);
-	SDL_Texture* result;
-	CHECK_SDL_PTR(result = SDL_CreateTexture(
+	colorBuffer = ALLOC<Color>(screenPixelsCount);
+	CHECK_SDL_PTR(colorBufferTexture = SDL_CreateTexture(
 		renderer,
 		SDL_PIXELFORMAT_ARGB8888,
 		SDL_TEXTUREACCESS_STREAMING,
-		width,
-		height
+		screenWidth,
+		screenHeight
 	));
-	CHECK_SDL(SDL_UpdateTexture(result, nullptr, buffer, width * pixelFormatSize));
-	FREE(buffer);
-	return result;
-}
-
-static void Setup(void)
-{
-	background = SetupColoredTexture(screenWidth, screenHeight,
-		[](int x [[maybe_unused]], int y [[maybe_unused]] ) { return Color::black; });
-	grid = SetupColoredTexture(screenWidth, screenHeight,
-		[](int x, int y) { return (x % 10 == 0 || y % 10 == 0) ? Color::white : Color::black; });
 }
 
 static void OnKeyDown(SDL_Keycode key)
@@ -133,14 +129,63 @@ static void Update(void)
 {
 }
 
+constexpr uint32_t operator>>(Color c, uint32_t offset)
+{
+	// I tend to use C-style casts for standard code stuff
+	// and C++-style casts for hacky or complicated things.
+	return (uint32_t)c >> offset;
+}
+
+SDL_Color ToSdlColor(Color color)
+{
+	return SDL_Color {
+		.r = (Uint8)((color >> 16) & 0xFF),
+		.g = (Uint8)((color >> 8) & 0xFF),
+		.b = (Uint8)((color >> 0) && 0xFF),
+		.a = (Uint8)((color >> 24) & 0xFF)
+	};
+}
+
+static void DrawRect(int x, int y, int width, int height, Color color)
+{
+	for (int i = 0; i < height; i++)
+	{
+		const int currentY = y + i;
+		const int currentRow = screenWidth * currentY;
+		for (int j = 0; j < width; j++)
+		{
+			const int currentX = x + j;
+			colorBuffer[currentRow + currentX] = color;
+		}
+	}
+}
+
+static void DrawGrid(int x, int y, int width, int height, Color color, int spacing)
+{
+	for (int i = 0; i < height; i += spacing)
+	{
+		DrawRect(0, y + i, width, 1, color);
+	}
+	for (int i = 0; i < width; i += spacing)
+	{
+		DrawRect(x + i, 0, 1, height, color);
+	}
+}
+
 static void Draw(void)
 {
+	// Begin draw
 	CHECK_SDL(SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF));
 	CHECK_SDL(SDL_RenderClear(renderer));
 
-	CHECK_SDL(SDL_RenderTexture(renderer, background, nullptr, nullptr));
-	CHECK_SDL(SDL_RenderTexture(renderer, grid, nullptr, nullptr));
+	// Actual draw
+	DrawRect(0, 0, screenWidth, screenHeight, Color::black);
+	DrawGrid(0, 0, screenWidth, screenHeight, Color::white, 10);
+	DrawRect(100, 100, 100, 100, Color::red);
 
+	// End draw
+	CHECK_SDL(SDL_UpdateTexture(colorBufferTexture, nullptr, colorBuffer, screenWidthBytes));
+	CHECK_SDL(SDL_RenderTexture(renderer, colorBufferTexture, nullptr, nullptr));
 	CHECK_SDL(SDL_RenderPresent(renderer));
 }
 

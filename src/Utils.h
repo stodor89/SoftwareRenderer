@@ -1,5 +1,7 @@
 #pragma once
 
+// Stuff related to debugging.
+
 #include <stdio.h>
 #include <assert.h>
 
@@ -30,7 +32,7 @@ constexpr void CHECK_PTR(auto * ptr)
 template <typename BufferType>
 constexpr BufferType* ALLOC(int count)
 {
-    BufferType* result = static_cast<BufferType*>(malloc(sizeof(BufferType) * count));
+    BufferType* result = (BufferType*)malloc(sizeof(BufferType) * count);
     CHECK_PTR(result);
     return result;
 }
