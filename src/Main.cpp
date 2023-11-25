@@ -7,20 +7,10 @@
 
 const char* title = "SoftwareRenderer";
 
-enum class Color : uint32_t
-{
-	black = 0xFF000000,
-	white = 0xFFFFFFFF,
-	red = 0xFFFF0000
-};
-
 constexpr int pixelFormatSize = 4; // bytes
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
-
-static Color* colorBuffer = nullptr;
-static SDL_Texture* colorBufferTexture = nullptr;
 
 static int screenWidth = 0;
 static int screenHeight = 0;
@@ -29,6 +19,33 @@ static int screenWidthBytes = 0;
 static int screenHeightBytes = 0;
 
 static bool quit = false;
+
+enum class Color : uint32_t
+{
+	black = 0xFF000000,
+	white = 0xFFFFFFFF,
+	red = 0xFFFF0000
+};
+
+static Color* colorBuffer = nullptr;
+static SDL_Texture* colorBufferTexture = nullptr;
+
+constexpr uint32_t operator>>(Color c, uint32_t offset)
+{
+	// I tend to use C-style casts for standard code stuff
+	// and C++-style casts for hacky or complicated things.
+	return (uint32_t)c >> offset;
+}
+
+SDL_Color ToSdlColor(Color color)
+{
+	return SDL_Color{
+		.r = (Uint8)((color >> 16) & 0xFF),
+		.g = (Uint8)((color >> 8) & 0xFF),
+		.b = (Uint8)((color >> 0) && 0xFF),
+		.a = (Uint8)((color >> 24) & 0xFF)
+	};
+}
 
 static inline bool ShouldQuit()
 {
@@ -68,18 +85,6 @@ static void Init(void)
 static void ClearColorBuffer(Color* buffer, size_t size, Color color)
 {
 	CHECK_SDL_PTR(SDL_memset4(buffer, (uint32_t)color, size));
-}
-
-static void PaintColorBufferPixelByPixel(Color* buffer, int w, int h, auto paintFunc)
-{
-	for (int y = 0; y < h; y++)
-	{
-		int rowStart = y * w;
-		for (int x = 0; x < w; x++)
-		{
-			buffer[rowStart + x] = paintFunc(x, y);
-		}
-	}
 }
 
 static void Setup(void)
@@ -123,23 +128,6 @@ static void HandleInput(void)
 
 static void Update(void)
 {
-}
-
-constexpr uint32_t operator>>(Color c, uint32_t offset)
-{
-	// I tend to use C-style casts for standard code stuff
-	// and C++-style casts for hacky or complicated things.
-	return (uint32_t)c >> offset;
-}
-
-SDL_Color ToSdlColor(Color color)
-{
-	return SDL_Color {
-		.r = (Uint8)((color >> 16) & 0xFF),
-		.g = (Uint8)((color >> 8) & 0xFF),
-		.b = (Uint8)((color >> 0) && 0xFF),
-		.a = (Uint8)((color >> 24) & 0xFF)
-	};
 }
 
 static void DrawRect(int x, int y, int width, int height, Color color)
