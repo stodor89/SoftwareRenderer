@@ -5,10 +5,6 @@
 #include "Common.h"
 #include "Utils.h"
 
-// TODO: Tests for "custom" stuff!
-
-// TODO: Organize these when they become stable!
-
 const char* title = "SoftwareRenderer";
 
 enum class Color : uint32_t
