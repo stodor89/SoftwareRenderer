@@ -83,9 +83,6 @@ static void Init(void)
 	screenWidthBytes = screenWidth * sizeof(uint32_t);
 	screenHeightBytes = screenWidth * sizeof(uint32_t);
 
-	// Despite enabling GPU acceleration, it's still a software
-	// renderer, because we create the entire pipeline using
-	// CPU instructions.
 	CHECK_SDL_PTR(renderer = SDL_CreateRenderer(window, nullptr, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 }
 
