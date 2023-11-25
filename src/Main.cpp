@@ -20,12 +20,14 @@ static int screenHeightBytes = 0;
 
 static bool quit = false;
 
-enum class Color : uint32_t
+enum class ArgbColor : uint32_t
 {
 	black = 0xFF000000,
 	white = 0xFFFFFFFF,
 	red = 0xFFFF0000
 };
+
+using Color = ArgbColor;
 
 static Color* colorBuffer = nullptr;
 static SDL_Texture* colorBufferTexture = nullptr;
@@ -39,12 +41,16 @@ constexpr uint32_t operator>>(Color c, uint32_t offset)
 
 SDL_Color ToSdlColor(Color color)
 {
+	constexpr uint32_t alphaOffset = 24;
+	constexpr uint32_t redOffset = 16;
+	constexpr uint32_t greenOffset = 8;
+	constexpr uint32_t blueOffset = 0;
 	return SDL_Color
 	{
-		.r = (Uint8)((color >> 16) & 0xFF),
-		.g = (Uint8)((color >> 8) & 0xFF),
-		.b = (Uint8)((color >> 0) && 0xFF),
-		.a = (Uint8)((color >> 24) & 0xFF)
+		.r = (Uint8)((color >> redOffset) & 0xFF),
+		.g = (Uint8)((color >> greenOffset) & 0xFF),
+		.b = (Uint8)((color >> blueOffset) & 0xFF),
+		.a = (Uint8)((color >> alphaOffset) & 0xFF)
 	};
 }
 
@@ -147,13 +153,14 @@ static void DrawRect(int x, int y, int width, int height, Color color)
 
 static void DrawGrid(int x, int y, int width, int height, Color color, int spacing)
 {
+	constexpr int thickness = 1;
 	for (int i = 0; i < height; i += spacing)
 	{
-		DrawRect(0, y + i, width, 1, color);
+		DrawRect(0, y + i, width, thickness, color);
 	}
 	for (int i = 0; i < width; i += spacing)
 	{
-		DrawRect(x + i, 0, 1, height, color);
+		DrawRect(x + i, 0, thickness, height, color);
 	}
 }
 
