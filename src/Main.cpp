@@ -5,6 +5,8 @@
 #include "Common.h"
 #include "Utils.h"
 
+// TODO: Tests for "custom" stuff!
+
 // TODO: Organize these when they become stable!
 
 const char* title = "SoftwareRenderer";
@@ -83,8 +85,6 @@ static void PaintColorBufferPixelByPixel(Color* buffer, int w, int h, auto paint
 		}
 	}
 }
-
-// TODO: Tests for "custom" stuff!
 
 static void Setup(void)
 {
