@@ -34,8 +34,6 @@ static SDL_Texture* colorBufferTexture = nullptr;
 
 constexpr uint32_t operator>>(Color c, uint32_t offset)
 {
-	// I tend to use C-style casts for standard code stuff
-	// and C++-style casts for hacky or complicated things.
 	return (uint32_t)c >> offset;
 }
 
