@@ -1,21 +1,12 @@
-#include <stdint.h>
-
-struct SDL_Window;
-struct SDL_Renderer;
-struct SDL_Texture;
-
 // TODO: Organize these when they become stable!
 
-constexpr int screenWidth = 1024;
-constexpr int screenWidthBytes = screenWidth * sizeof(uint32_t);
-constexpr int screenHeight = 768;
-constexpr int screenHeightBytes = screenHeight * sizeof(uint32_t);
+int screenWidth = 0;
+int screenHeight = 0;
+int screenWidthBytes = 0;
+int screenHeightBytes = 0;
+
 const char* title = "SoftwareRenderer";
-static SDL_Window* window;
-static SDL_Renderer* renderer;
 static bool quit = false;
-static uint32_t* colorBuffer = nullptr;
-static SDL_Texture* colorBufferTexture = nullptr;
 
 static inline bool ShouldQuit()
 {

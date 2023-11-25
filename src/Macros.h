@@ -41,29 +41,35 @@ constexpr void FREE(auto* ptr)
     free(ptr);
 }
 
-constexpr void CHECK_NULLPTR(auto* ptr)
+constexpr bool CHECK_NULLPTR(auto* ptr)
 {
     if (!ShouldQuit() && ptr != nullptr) [[unlikely]]
-        {
-            ERROR("Value is not zero!");
-            assert(false);
-        }
+    {
+        ERROR("Value is not zero!");
+        assert(false);
+        return false;
+    }
+    return true;
 }
 
-constexpr void CHECK_SDL(auto value)
+constexpr bool CHECK_SDL(auto value)
 {
     if (!ShouldQuit() && value != 0) [[unlikely]]
     {
         ERROR("SDL: %s", SDL_GetError());
         assert(false);
+        return false;
     }
+    return true;
 }
 
-constexpr void CHECK_SDL_PTR(auto* ptr)
+constexpr bool CHECK_SDL_PTR(auto* ptr)
 {
     if (!ShouldQuit() && ptr == nullptr) [[unlikely]]
     {
         ERROR("SDL: %s", SDL_GetError());
         assert(false);
+        return false;
     }
+    return true;
 }

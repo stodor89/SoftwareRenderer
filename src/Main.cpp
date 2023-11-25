@@ -5,6 +5,12 @@
 #include "Main.h"
 #include "Macros.h"
 
+constexpr int uint32Size = sizeof(uint32_t);
+static SDL_Window* window;
+static SDL_Renderer* renderer;
+static SDL_Texture* colorBufferTexture = nullptr;
+static uint32_t* colorBuffer = nullptr;
+
 // Not calling this function upon exit may leave the system in invalid state!
 static void Deinit(void)
 {
@@ -17,7 +23,10 @@ static void Deinit(void)
 static void Init(void)
 {
 	CHECK_SDL(SDL_Init(SDL_INIT_VIDEO));
-	CHECK_SDL_PTR(window = SDL_CreateWindow(title, screenWidth, screenHeight, 0U));
+	CHECK_SDL_PTR(window = SDL_CreateWindow(title, 0, 0, SDL_WINDOW_FULLSCREEN));
+	CHECK_SDL(SDL_GetWindowSizeInPixels(window, &screenWidth, &screenHeight));
+	screenWidthBytes = screenWidth * uint32Size;
+	screenHeightBytes = screenWidth * uint32Size;
 
 	// Despite enabling GPU acceleration, it's still a software
 	// renderer, because we create the entire pipeline using
