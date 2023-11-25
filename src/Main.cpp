@@ -8,6 +8,7 @@
 // Not calling this function upon exit may leave the system in invalid state!
 static void Deinit(void)
 {
+	SDL_DestroyTexture(colorBufferTexture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
@@ -28,6 +29,14 @@ static void Setup(void)
 {
 	// No need to free this for now.
 	colorBuffer = ALLOC<uint32_t>(screenWidth * screenHeight);
+
+	CHECK_SDL_PTR(colorBufferTexture = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		screenWidth,
+		screenHeight
+	));
 }
 
 static void OnKeyDown(SDL_Keycode key)
@@ -61,10 +70,32 @@ static void Update(void)
 {
 }
 
+static void ClearColorBuffer(uint32_t color)
+{
+	for (int y = 0; y < screenHeight; y++)
+	{
+		int rowStart = y * screenWidth;
+		for (int x = 0; x < screenWidth; x++)
+		{
+			colorBuffer[rowStart + x] = color;
+		}
+	}
+}
+
+static void RenderColorBuffer()
+{
+	CHECK_SDL(SDL_UpdateTexture(colorBufferTexture, nullptr, colorBuffer, screenWidthBytes));
+	CHECK_SDL(SDL_RenderTexture(renderer, colorBufferTexture, nullptr, nullptr));
+}
+
 static void Draw(void)
 {
-	CHECK_SDL(SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0xFF, 0xFF));
+	CHECK_SDL(SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF));
 	CHECK_SDL(SDL_RenderClear(renderer));
+
+	RenderColorBuffer();
+	ClearColorBuffer(0xFFFF00FF);
+
 	CHECK_SDL(SDL_RenderPresent(renderer));
 }
 
