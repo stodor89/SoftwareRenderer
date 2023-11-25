@@ -17,7 +17,10 @@ This is a renderer I'm making as a part of Pikuma's "3D Graphics Programming for
 - OOP where it makes sense
 - Make sure color formats are consistent
 
-### FAQ (personal opinions, subject to change)
+### FAQ
+
+Q: You seem to have some strong opinions, don't you?\
+A: "Strong opinions, weakly held."
 
 Q: Why use C-style casts?\
 A: They're more readable, and readability is the #1 most important thing about code. I use C++-style casts when doing something shady, and C-style casts when it's natural code flow.
