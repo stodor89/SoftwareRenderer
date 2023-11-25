@@ -1,5 +1,4 @@
 # SoftwareRenderer
----------------------
 This is a renderer I'm making as a part of Pikuma's "3D Graphics Programming form Scratch" course.
 
 ### Usage
