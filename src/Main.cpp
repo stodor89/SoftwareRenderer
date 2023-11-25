@@ -39,7 +39,8 @@ constexpr uint32_t operator>>(Color c, uint32_t offset)
 
 SDL_Color ToSdlColor(Color color)
 {
-	return SDL_Color{
+	return SDL_Color
+	{
 		.r = (Uint8)((color >> 16) & 0xFF),
 		.g = (Uint8)((color >> 8) & 0xFF),
 		.b = (Uint8)((color >> 0) && 0xFF),
