@@ -8,7 +8,7 @@ endif()
 
 project ("SoftwareRenderer")
 
-add_executable (SoftwareRenderer "src/Main.cpp"  "src/Macros.h" "src/Main.h")
+add_executable (SoftwareRenderer "src/Main.cpp"  "src/Macros.h" "src/Main.h" )
 
 set_property(TARGET SoftwareRenderer PROPERTY CXX_STANDARD 23)
 
