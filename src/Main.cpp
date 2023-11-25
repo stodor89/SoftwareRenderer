@@ -23,8 +23,8 @@ static bool quit = false;
 enum class Color : uint32_t
 {
 	black = 0xFF000000,
+	red = 0xFFFF0000,
 	white = 0xFFFFFFFF,
-	red = 0xFFFF0000
 };
 
 static Color* colorBuffer = nullptr;
