@@ -13,9 +13,9 @@ add_executable (SoftwareRenderer "src/Main.cpp"  "src/Macros.h" "src/Main.h")
 set_property(TARGET SoftwareRenderer PROPERTY CXX_STANDARD 23)
 
 if (MSVC)
-    add_compile_options(/W4)
+    target_compile_options(SoftwareRenderer PRIVATE /W4)
 else()
-    add_compile_options(-Wall -Wextra -Wpedantic)
+    target_compile_options(SoftwareRenderer PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 add_subdirectory("SDL")
