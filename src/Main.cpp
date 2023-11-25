@@ -20,37 +20,15 @@ static int screenHeightBytes = 0;
 
 static bool quit = false;
 
-enum class ArgbColor : uint32_t
+enum class Color : uint32_t
 {
 	black = 0xFF000000,
 	white = 0xFFFFFFFF,
 	red = 0xFFFF0000
 };
 
-using Color = ArgbColor;
-
 static Color* colorBuffer = nullptr;
 static SDL_Texture* colorBufferTexture = nullptr;
-
-constexpr uint32_t operator>>(Color c, uint32_t offset)
-{
-	return (uint32_t)c >> offset;
-}
-
-SDL_Color ToSdlColor(Color color)
-{
-	constexpr uint32_t alphaOffset = 24;
-	constexpr uint32_t redOffset = 16;
-	constexpr uint32_t greenOffset = 8;
-	constexpr uint32_t blueOffset = 0;
-	return SDL_Color
-	{
-		.r = (Uint8)((color >> redOffset) & 0xFF),
-		.g = (Uint8)((color >> greenOffset) & 0xFF),
-		.b = (Uint8)((color >> blueOffset) & 0xFF),
-		.a = (Uint8)((color >> alphaOffset) & 0xFF)
-	};
-}
 
 static inline bool ShouldQuit()
 {

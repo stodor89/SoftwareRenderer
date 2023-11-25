@@ -15,4 +15,3 @@ This is a renderer I'm making as a part of Pikuma's "3D Graphics Programming for
 - Organize static stuff inside Main.cpp
 - Build/Install procedure improvements
 - OOP where it makes sense
-- Make sure color formats are consistent
