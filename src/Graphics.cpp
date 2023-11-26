@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
@@ -10,6 +12,8 @@ static WindowData windowData = { 0, 0, 0 };
 static int screenPixelsCount = 0;
 static int screenWidthBytes = 0;
 static int screenHeightBytes = 0;
+static int lastPixelX = 0;
+static int lastPixelY = 0;
 constexpr int pixelFormatSize = 4; // bytes
 
 static SDL_Window* window = nullptr;
@@ -62,6 +66,8 @@ void InitGraphics(const char* windowTitle)
 	screenPixelsCount = windowData.width * windowData.height;
 	screenWidthBytes = windowData.width * sizeof(uint32_t);
 	screenHeightBytes = windowData.height * sizeof(uint32_t);
+	lastPixelX = windowData.width - 1;
+	lastPixelY = windowData.height - 1;
 
 	CHECK_SDL_PTR(renderer = SDL_CreateRenderer(window, nullptr, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 
@@ -82,21 +88,33 @@ static void ClearColorBuffer(Color* buffer, size_t size, Color color)
 
 void DrawRect(int x, int y, int width, int height, Color color)
 {
-	for (int i = 0; i < height; i++)
+	const int leftBound = std::max(0, x);
+	const int topBound = std::max(0, y);
+	const int rightBound = std::min(windowData.width, x + width);
+	const int bottomBound = std::min(windowData.height, y + height);
+	for (int currentY = topBound; currentY < bottomBound; currentY++)
 	{
-		const int currentY = y + i;
 		const int currentRow = windowData.width * currentY;
-		for (int j = 0; j < width; j++)
+		for (int currentX = leftBound; currentX < rightBound; currentX++)
 		{
-			const int currentX = x + j;
 			colorBuffer[currentRow + currentX] = color;
 		}
 	}
 }
 
+void DrawPixel(int x, int y, Color color)
+{
+	DrawRect(x, y, 1, 1, color);
+}
+
 void DrawGrid(int x, int y, int width, int height, Color color, int spacing)
 {
 	constexpr int thickness = 1;
+	if (spacing < thickness)
+	{
+		ERROR("DrawGrid: spacing < %d is not valid. Supplied spacing=%d", thickness, spacing);
+		spacing = thickness;
+	}
 	for (int i = 0; i < height; i += spacing)
 	{
 		DrawRect(0, y + i, width, thickness, color);

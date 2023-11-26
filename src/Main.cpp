@@ -29,6 +29,9 @@ static void Draw(void)
 	DrawRect(0, 0, window.width, window.height, Color::black);
 	DrawGrid(0, 0, window.width, window.height, Color::white, 10);
 	DrawRect(100, 100, 100, 100, Color::red);
+	DrawPixel(150, 150, Color::cyan);
+	DrawPixel(151, 151, Color::cyan);
+	DrawPixel(152, 152, Color::cyan);
 	EndDraw();
 }
 

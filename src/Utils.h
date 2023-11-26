@@ -25,10 +25,10 @@
 constexpr void CHECK_PTR(auto * ptr)
 {
     if (!ShouldQuit() && ptr == nullptr) [[unlikely]]
-        {
-            ERROR("Null pointer!");
-            assert(false);
-        }
+    {
+        ERROR("Null pointer!");
+        assert(false);
+    }
 }
 
 template <typename BufferType>
