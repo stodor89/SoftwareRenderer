@@ -1,4 +1,6 @@
-﻿#include "Common.h"
+﻿#include <stdlib.h>
+
+#include "Common.h"
 #include "Graphics.h"
 #include "Input.h"
 #include "Utils.h"
