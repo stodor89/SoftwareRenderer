@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "Common.h"
+
 #define MESSAGE(format, ...) \
     do { \
         char message[1024] = {}; \
@@ -48,28 +50,6 @@ constexpr bool CHECK_NULLPTR(auto* ptr)
     if (!ShouldQuit() && ptr != nullptr) [[unlikely]]
     {
         ERROR("Value is not zero!");
-        assert(false);
-        return false;
-    }
-    return true;
-}
-
-constexpr bool CHECK_SDL(auto value)
-{
-    if (!ShouldQuit() && value != 0) [[unlikely]]
-    {
-        ERROR("SDL: %s", SDL_GetError());
-        assert(false);
-        return false;
-    }
-    return true;
-}
-
-constexpr bool CHECK_SDL_PTR(auto* ptr)
-{
-    if (!ShouldQuit() && ptr == nullptr) [[unlikely]]
-    {
-        ERROR("SDL: %s", SDL_GetError());
         assert(false);
         return false;
     }
