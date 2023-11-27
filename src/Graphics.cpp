@@ -86,6 +86,11 @@ static void ClearColorBuffer(Color* buffer, size_t size, Color color)
 	CHECK_SDL_PTR(SDL_memset4(buffer, (uint32_t)color, size));
 }
 
+void DrawRect(float x, float y, int width, int height, Color color)
+{
+	DrawRect((int)x, (int)y, width, height, color);
+}
+
 void DrawRect(int x, int y, int width, int height, Color color)
 {
 	const int leftBound = std::max(0, x);
@@ -127,13 +132,14 @@ void DrawGrid(int x, int y, int width, int height, Color color, int spacing)
 
 void BeginDraw(void)
 {
-	CHECK_SDL(SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF));
-	CHECK_SDL(SDL_RenderClear(renderer));
+	//CHECK_SDL(SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF));
+	//CHECK_SDL(SDL_RenderClear(renderer));
 }
 
 void EndDraw(void)
 {
 	CHECK_SDL(SDL_UpdateTexture(colorBufferTexture, nullptr, colorBuffer, screenWidthBytes));
 	CHECK_SDL(SDL_RenderTexture(renderer, colorBufferTexture, nullptr, nullptr));
+	ClearColorBuffer(colorBuffer, screenPixelsCount, Color::black);
 	CHECK_SDL(SDL_RenderPresent(renderer));
 }

@@ -27,6 +27,7 @@ void InitGraphics(const char* windowTitle);
 void DeinitGraphics(void);
 const WindowData& GetWindowData(void);
 void DrawPixel(int x, int y, Color color);
+void DrawRect(float x, float y, int width, int height, Color color);
 void DrawRect(int x, int y, int width, int height, Color color);
 void DrawGrid(int x, int y, int width, int height, Color color, int spacing);
 void BeginDraw(void);
